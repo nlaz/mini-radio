@@ -1,0 +1,12 @@
+{
+  "name": "mini-radio",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch --no-warnings src/index.js"
+  },
+  "engines": {
+    "node": ">=21.0.0"
+  }
+}
