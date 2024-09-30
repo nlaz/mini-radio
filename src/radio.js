@@ -4,15 +4,21 @@ import Broadcast from './broadcast.js';
 import { ffmpegArgs } from './utils.js';
 
 class Radio {
-  constructor(params) {
+  constructor() {
+    this.ffmpeg = null;
     this.broadcast = new Broadcast();
+    this.run();
   }
 
-  start() {
+  run() {
     const currentTrack = this.selectRandomTrack();
     const input = `./library/${currentTrack}`;
-    const ffmpegProcess = spawn('ffmpeg', ffmpegArgs(input));
-    ffmpegProcess.stdout.pipe(this.broadcast);
+    this.ffmpeg = spawn('ffmpeg', ffmpegArgs(input));
+    console.log(`Now playing: ${currentTrack}`);
+
+    this.ffmpeg.on('close', () => this.stop());
+    this.ffmpeg.on('error', () => this.stop());
+    this.ffmpeg.stdout.pipe(this.broadcast);
   }
 
   selectRandomTrack() {
@@ -26,6 +32,10 @@ class Radio {
 
   unsubscribe(id) {
     this.broadcast.unsubscribe(id);
+  }
+
+  stop() {
+    this.run();
   }
 }
 

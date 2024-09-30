@@ -1,8 +1,7 @@
 import http from 'http';
 import Radio from './radio.js';
 
-const radio = new Radio();
-radio.start();
+let radio;
 
 const server = http.createServer((req, res) => {
   if (req.method === 'GET' && req.url === '/') {
@@ -35,5 +34,6 @@ const server = http.createServer((req, res) => {
 
 server.listen(3000, (err) => {
   if (err) throw err;
+  radio = new Radio();
   console.log('Server running on http://localhost:3000');
 });

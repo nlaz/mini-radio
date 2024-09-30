@@ -42,10 +42,14 @@ class Broadcast extends Writable {
       this.broadcast(chunk);
     });
     throttler.on('error', (err) => {
-      this.logger.error('[WebStream] Throttle error', err);
+      this.logger.error('[Broadcast] Throttle error', err);
     });
     return throttler;
   };
+
+  onStop(callback) {
+    this.emitter.on('stop', callback);
+  }
 }
 
 export default Broadcast;
