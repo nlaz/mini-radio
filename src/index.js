@@ -3,6 +3,8 @@ import Radio from './radio.js';
 
 let radio;
 
+const port = process.argv[2] ? parseInt(process.argv[2], 10) : 3000;
+
 const server = http.createServer((req, res) => {
   if (req.method === 'GET' && req.url === '/') {
     const { id, passthrough } = radio.subscribe();
@@ -32,8 +34,8 @@ const server = http.createServer((req, res) => {
   }
 });
 
-server.listen(3000, (err) => {
+server.listen(port, (err) => {
   if (err) throw err;
   radio = new Radio();
-  console.log('Server running on http://localhost:3000');
+  console.log(`Server running on http://localhost:${port}`);
 });
