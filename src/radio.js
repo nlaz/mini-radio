@@ -1,24 +1,26 @@
 import fs from 'fs';
-import { spawn } from 'child_process';
 import Broadcast from './broadcast.js';
-import { ffmpegArgs } from './utils.js';
+import Throttle from './throttle.js';
+import { ffmpegArgs, BITRATE } from './utils.js';
 
 class Radio {
   constructor() {
     this.ffmpeg = null;
-    this.broadcast = new Broadcast();
+    this.broadcaster = new Broadcast();
+    this.throttler = new Throttle(BITRATE / 8);
     this.run();
   }
 
   run() {
     const currentTrack = this.selectRandomTrack();
     const input = `./library/${currentTrack}`;
-    this.ffmpeg = spawn('ffmpeg', ffmpegArgs(input));
     console.log(`Now playing: ${currentTrack}`);
+    const readableStream = fs.createReadStream(input);
+    readableStream.pipe(this.throttler).pipe(this.broadcaster);
 
-    this.ffmpeg.on('close', () => this.stop());
-    this.ffmpeg.on('error', () => this.stop());
-    this.ffmpeg.stdout.pipe(this.broadcast);
+    readableStream.on('end', () => {
+      console.log('readableStream ended!');
+    });
   }
 
   selectRandomTrack() {
@@ -27,11 +29,11 @@ class Radio {
   }
 
   subscribe() {
-    return this.broadcast.subscribe();
+    return this.broadcaster.subscribe();
   }
 
   unsubscribe(id) {
-    this.broadcast.unsubscribe(id);
+    this.broadcaster.unsubscribe(id);
   }
 
   stop() {
