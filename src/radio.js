@@ -32,7 +32,8 @@ class Radio {
   }
 
   playNextTrack() {
-    setTimeout(() => this.run(), 20000);
+    this.throttler = new Throttle(BITRATE / 8);
+    this.run();
   }
 
   selectRandomTrack() {
