@@ -1,5 +1,5 @@
 import { PassThrough, Writable } from 'stream';
-import { generateSessionId, BITRATE } from './utils.js';
+import { generateSessionId } from './utils.js';
 
 class Broadcast extends Writable {
   constructor() {
@@ -28,10 +28,6 @@ class Broadcast extends Writable {
     for (const passthrough of this.subscribers.values()) {
       passthrough.write(chunk);
     }
-  }
-
-  onStop(callback) {
-    this.emitter.on('stop', callback);
   }
 }
 

@@ -24,7 +24,7 @@ export default class Throttle extends Transform {
 
     options.lowWaterMark ??= 0;
     options.highWaterMark ??= 0;
-    options.chunkSize ??= Math.floor(options.bps / 100);
+    options.chunkSize ??= Math.floor(options.bps / 10);
 
     return options;
   }

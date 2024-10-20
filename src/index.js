@@ -17,11 +17,11 @@ const server = http.createServer((req, res) => {
       'Access-Control-Allow-Methods': 'GET, OPTIONS, HEAD',
       'Content-Type': 'audio/mpeg',
       'Cache-Control': 'no-cache, no-store',
-      Connection: 'close',
-      Expires: 'Mon, 26 Jul 1997 05:00:00 GMT',
+      'Transfer-Encoding': 'chunked',
     });
 
     passthrough.on('data', (chunk) => {
+      console.log('chunk', chunk.length);
       res.write(chunk);
     });
 
