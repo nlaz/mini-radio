@@ -1,9 +1,8 @@
 import http from 'http';
 import Radio from './radio.js';
+import { port } from './utils.js';
 
 let radio;
-
-const port = process.argv[2] ? parseInt(process.argv[2], 10) : 3000;
 
 const server = http.createServer((req, res) => {
   if (req.method === 'GET' && req.url === '/') {
@@ -18,8 +17,7 @@ const server = http.createServer((req, res) => {
       'Transfer-Encoding': 'chunked',
     });
 
-    passthrough.on('data', (chunk) => res.write(chunk));
-    passthrough.on('end', () => res.end());
+    passthrough.pipe(res, { end: false });
   } else {
     res.writeHead(404);
     res.end('Not Found');
