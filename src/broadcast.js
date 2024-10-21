@@ -9,7 +9,7 @@ class Broadcast extends Writable {
 
   subscribe() {
     const id = generateSessionId();
-    const passthrough = PassThrough();
+    const passthrough = new PassThrough();
 
     this.subscribers.set(id, passthrough);
 

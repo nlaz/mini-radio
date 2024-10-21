@@ -7,3 +7,5 @@ export function generateSessionId() {
     .map(() => POSSIBLE_CHARS.charAt((Math.random() * numPossible) | 0));
   return sessionIDArray.join('');
 }
+
+export const port = process.argv[2] ? parseInt(process.argv[2], 10) : 3000;

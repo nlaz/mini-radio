@@ -1,38 +1,29 @@
 import fs from 'fs';
 import Broadcast from './broadcast.js';
 import Throttle from './throttle.js';
-import Monitor from './monitor.js';
 
-export const BITRATE = 128 * 1000;
+export const bitrate = 128 * 1000;
 
 class Radio {
   constructor() {
     this.ffmpeg = null;
     this.broadcaster = new Broadcast();
-    this.throttler = new Throttle(BITRATE / 8);
-    this.inputMonitor = new Monitor('logs/input.json');
-    this.outputMonitor = new Monitor('logs/output.json');
-    this.streamStartTime = null;
+    this.throttler = new Throttle(bitrate / 8);
     this.run();
   }
 
   run() {
     const currentTrack = this.selectRandomTrack();
-    const input = `./library/${currentTrack}`;
+    const filepath = `./library/${currentTrack}`;
+    const stream = fs.createReadStream(filepath);
     console.log(`Now playing: ${currentTrack}`);
-    this.streamStartTime = Date.now();
-    const readableStream = fs.createReadStream(input);
-    readableStream.pipe(this.throttler, { end: false }).pipe(this.broadcaster, { end: false });
 
-    readableStream.on('end', () => {
-      const streamDuration = (Date.now() - this.streamStartTime) / 1000; // Convert to seconds
-      console.log(`Readable Stream ended. Time: ${streamDuration.toFixed(2)} seconds`);
-      this.playNextTrack();
-    });
+    stream.pipe(this.throttler, { end: false }).pipe(this.broadcaster, { end: false });
+    stream.on('end', () => this.nextTrack());
   }
 
-  playNextTrack() {
-    this.throttler = new Throttle(BITRATE / 8);
+  nextTrack() {
+    this.throttler = new Throttle(bitrate / 8);
     this.run();
   }
 

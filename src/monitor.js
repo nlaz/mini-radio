@@ -8,16 +8,15 @@ export default class Monitor extends PassThrough {
     this.startTime = Date.now();
     this.chunkData = [];
 
-    this.on('data', this.logChunk.bind(this));
+    this.on('data', this.chunk.bind(this));
     this.on('end', this.writeResults.bind(this));
   }
 
-  logChunk(chunk) {
-    const chunkInfo = {
+  chunk(chunk) {
+    this.chunkData.push({
       time: Date.now() - this.startTime,
       size: chunk.length,
-    };
-    this.chunkData.push(chunkInfo);
+    });
   }
 
   writeResults() {
