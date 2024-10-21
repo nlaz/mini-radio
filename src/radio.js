@@ -2,7 +2,7 @@ import fs from 'fs';
 import Broadcast from './broadcast.js';
 import Throttle from './throttle.js';
 
-export const bitrate = 128 * 1000;
+export const bitrate = 196 * 1000;
 
 class Radio {
   constructor() {

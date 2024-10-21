@@ -9,16 +9,11 @@ const ParserState = {
 
 export default class Parser {
   constructor(stream) {
-    if (
-      !stream ||
-      (typeof stream._transform !== 'function' && typeof stream._write !== 'function')
-    ) {
-      throw new Error('Must pass a Writable or Transform stream');
+    if (!stream || typeof stream._transform !== 'function') {
+      throw new Error('Must be a Transform stream');
     }
 
     this.stream = stream;
-    this.isTransform = typeof stream._transform === 'function';
-    this.isWritable = typeof stream._write === 'function';
     this.init();
   }
 
@@ -51,37 +46,26 @@ export default class Parser {
     this.state = state;
   }
 
-  write(chunk, encoding, fn) {
-    if (typeof encoding === 'function') {
-      fn = encoding;
-    }
-    this.data(chunk, null, fn);
-  }
-
   transform(chunk, output, fn) {
     this.data(chunk, output || this.output, fn);
   }
 
   data(chunk, output, fn) {
-    const process = () => {
-      if (this.bytesLeft <= 0) {
-        return fn(new Error('Got data but not currently parsing anything'));
+    if (this.bytesLeft <= 0) {
+      return fn(new Error('Got data but not parsing anything'));
+    }
+
+    const chunkSize = Math.min(chunk.length, this.bytesLeft);
+    const currentChunk = chunk.slice(0, chunkSize);
+
+    this._process(currentChunk, output, (err) => {
+      if (err) return fn(err);
+      if (chunk.length > chunkSize) {
+        this.data(chunk.slice(chunkSize), output, fn);
+      } else {
+        fn();
       }
-
-      const chunkSize = Math.min(chunk.length, this.bytesLeft);
-      const currentChunk = chunk.slice(0, chunkSize);
-
-      this._process(currentChunk, output, (err) => {
-        if (err) return fn(err);
-        if (chunk.length > chunkSize) {
-          this.data(chunk.slice(chunkSize), output, fn);
-        } else {
-          fn();
-        }
-      });
-    };
-
-    process();
+    });
   }
 
   _process(chunk, output, fn) {
