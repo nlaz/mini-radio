@@ -1,21 +1,25 @@
 import fs from 'fs';
+import { Mp3Parser } from 'mp3-parser';
 import Broadcast from './broadcast.js';
 import Throttle from './throttle.js';
 
 export const bitrate = 196 * 1000;
 
+const mp3Parser = new Mp3Parser();
+
 class Radio {
   constructor() {
-    this.ffmpeg = null;
     this.broadcaster = new Broadcast();
-    this.throttler = new Throttle(bitrate / 8);
+    this.throttler = null;
     this.run();
   }
 
-  run() {
+  async run() {
     const currentTrack = this.selectRandomTrack();
     const filepath = `./library/${currentTrack}`;
     const stream = fs.createReadStream(filepath);
+    const metadata = await mp3Parser.parse(filepath);
+    this.throttler = new Throttle(metadata.bitrate / 8);
     console.log(`Now playing: ${currentTrack}`);
 
     stream.pipe(this.throttler, { end: false }).pipe(this.broadcaster, { end: false });
@@ -23,7 +27,6 @@ class Radio {
   }
 
   nextTrack() {
-    this.throttler = new Throttle(bitrate / 8);
     this.run();
   }
 
