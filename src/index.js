@@ -24,5 +24,5 @@ const server = http.createServer((req, res) => {
 server.listen(port, (err) => {
   if (err) throw err;
   radio = new Radio();
-  console.log(`Server running on http://localhost:${port}`);
+  console.log(`Radio running on http://localhost:${port}`);
 });

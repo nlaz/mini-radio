@@ -2,6 +2,12 @@
   "name": "mini-radio",
   "version": "1.0.0",
   "type": "module",
+  "bin": {
+    "mini-radio": "./src/index.js"
+  },
+  "files": [
+    "src"
+  ],
   "scripts": {
     "start": "bun src/index.js",
     "dev": "bun --watch --no-warnings src/index.js",

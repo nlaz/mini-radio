@@ -2,6 +2,7 @@ import fs from 'fs';
 import { Mp3Parser } from 'mp3-parser';
 import { Throttler } from 'throttler';
 import Broadcast from './broadcast.js';
+import { folder } from './utils.js';
 
 export const bitrate = 196 * 1000;
 
@@ -31,7 +32,7 @@ class Radio {
   }
 
   selectRandomTrack() {
-    const files = fs.readdirSync('./library');
+    const files = fs.readdirSync(folder);
     const mp3Files = files.filter((file) => file.toLowerCase().endsWith('.mp3'));
     return mp3Files.length > 0 ? mp3Files[Math.floor(Math.random() * mp3Files.length)] : null;
   }

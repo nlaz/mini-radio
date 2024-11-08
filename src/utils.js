@@ -8,4 +8,6 @@ export function generateSessionId() {
   return sessionIDArray.join('');
 }
 
-export const port = process.argv[2] ? parseInt(process.argv[2], 10) : 3000;
+export const folder = process.argv[2] ? process.argv[2] : './library';
+
+export const port = process.argv[3] ? process.argv[3] : 3000;
