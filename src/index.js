@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import http from 'http';
 import Radio from './radio.js';
 import { port } from './utils.js';
