@@ -16,8 +16,7 @@ class Radio {
   }
 
   async run() {
-    const currentTrack = this.selectRandomTrack();
-    const filepath = `./library/${currentTrack}`;
+    const { currentTrack, filepath } = this.selectRandomTrack();
     const stream = fs.createReadStream(filepath);
     const metadata = await mp3Parser.parse(filepath);
     this.throttler = new Throttler(metadata.bitrate / 8);
@@ -34,7 +33,14 @@ class Radio {
   selectRandomTrack() {
     const files = fs.readdirSync(folder);
     const mp3Files = files.filter((file) => file.toLowerCase().endsWith('.mp3'));
-    return mp3Files.length > 0 ? mp3Files[Math.floor(Math.random() * mp3Files.length)] : null;
+
+    if (!mp3Files?.length) {
+      throw Error(`No MP3 files found in the folder: ${folder}`);
+    }
+
+    const currentTrack = mp3Files[Math.floor(Math.random() * mp3Files.length)];
+    const filepath = `${folder}/${currentTrack}`;
+    return { currentTrack, filepath };
   }
 
   subscribe() {
