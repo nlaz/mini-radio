@@ -1,11 +1,10 @@
 # mini-radio 📻
 
-A lightweight command-line radio player built with Bun.
+A lightweight radio that plays mp3s in the browser.
 
 ## Prerequisites
 
 - Node.js >= 21.0.0
-- [Bun Runtime](https://bun.sh)
 
 ## Installation 
 
